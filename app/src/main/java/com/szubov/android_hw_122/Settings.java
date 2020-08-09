@@ -17,6 +17,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import java.io.File;
 
+import static android.os.Environment.DIRECTORY_DOWNLOADS;
+
 public class Settings extends AppCompatActivity {
 
     private EditText mFilePathEdTx;
@@ -71,7 +73,7 @@ public class Settings extends AppCompatActivity {
                 Toast.makeText(this, R.string.file_name_string_is_empty, Toast.LENGTH_LONG).show();
                 return null;
             } else {
-                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),picName);
+                File file = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS),picName);
                 if (!file.exists()) {
                     Toast.makeText(this, R.string.directory_not_available, Toast.LENGTH_LONG).show();
                     return null;
@@ -108,7 +110,7 @@ public class Settings extends AppCompatActivity {
 
     public boolean isExternalStorageReadable() {
         Log.d(TAG, "Settings -> checkFilePathEditText -> isExternalStorageReadable");
-        String state = Environment.getExternalStorageState();
-        return Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
+        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) ||
+                Environment.MEDIA_MOUNTED_READ_ONLY.equals(Environment.getExternalStorageState());
     }
 }

@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Android-HW-12.2</string>
+    <string name="main_activity_name">Калькулятор</string>
+    <string name="text_view_default_value">0</string>
+    <string name="btn_seven">7</string>
+    <string name="btn_eight">8</string>
+    <string name="btn_nine">9</string>
+    <string name="btn_four">4</string>
+    <string name="btn_five">5</string>
+    <string name="btn_six">6</string>
+    <string name="btn_one">1</string>
+    <string name="btn_two">2</string>
+    <string name="btn_three">3</string>
+    <string name="btn_point">\u002E</string>
+    <string name="btn_zero">0</string>
+    <string name="too_many_characters">Слишком много символов!</string>
+    <string name="btn_action_clean_all">C</string>
+    <string name="text_view_action_reset">""</string>
+    <string name="btn_action_change_of_sign">\u00B1</string>
+    <string name="btn_action_percent">\u0025</string>
+    <string name="btn_action_division">\u00F7</string>
+    <string name="btn_action_multiplication">×</string>
+    <string name="btn_action_subtraction">-</string>
+    <string name="btn_action_addition">+</string>
+    <string name="btn_action_equally">=</string>
+    <string name="btn_action_mode_standard">mode stnd</string>
+    <string name="btn_action_backspace">\u232B</string>
+    <string name="btn_action_memory_clean">mc</string>
+    <string name="btn_action_addition_and_save">m+</string>
+    <string name="btn_action_subtraction_and_save">m-</string>
+    <string name="btn_action_memory_read">mr</string>
+    <string name="btn_action_square_root">√</string>
+    <string name="btn_action_mode_extended">mode\next</string>
+    <string name="btn_action_clean">AC</string>
+    <string name="btn_2_zero">00</string>
+    <string name="menu_settings">Settings</string>
+    <string name="image_view_background">imageBackground</string>
+    <string name="edit_text_file_path_hint">file.jpg</string>
+    <string name="btn_Ok">OK</string>
+    <string name="activity_settings_name">Настройки</string>
+    <string name="toast_app_need_read_permission">Для дальнейшей работы преложению необходимо разрешение на чтение во внешнем хранилище!</string>
+    <string name="external_storage_not_available">Внешнее хранилище недоступно!</string>
+    <string name="btn_cancel">Отмена</string>
+    <string name="file_name_string_is_empty">Введите название файла!</string>
+    <string name="directory_not_available">Директория не создана!</string>
+</resources>

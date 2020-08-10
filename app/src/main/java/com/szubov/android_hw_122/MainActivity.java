@@ -6,19 +6,31 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView mTextViewValues;
     private View mStandardCalc;
     private View mExtendedCalc;
+    private ImageView mBackground;
+    private static final String SETTINGS_FILE_NAME = "userSettings";
     private static final int BACKGROUND_CHOICE = 0;
+    private static final String TAG = "My app";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,10 +42,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         initViews();
 
+        loadUserSettings();
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(TAG, "MainActivity -> onCreateOptionsMenu");
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_settings, menu);
         return true;
@@ -41,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "MainActivity -> onOptionItemSelected");
         if (item.getItemId() == R.id.menuSettings) {
             Intent settingsIntent = new Intent(MainActivity.this, Settings.class);
             startActivityForResult(settingsIntent, BACKGROUND_CHOICE);
@@ -51,27 +67,80 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "MainActivity -> onActivityResult");
         super.onActivityResult(requestCode, resultCode, data);
-        ImageView imageView = findViewById(R.id.imageViewBackground);
         if (requestCode == BACKGROUND_CHOICE) {
             if (resultCode == RESULT_OK) {
                 try {
-                    Bitmap image = BitmapFactory.decodeFile(data.getStringExtra(Settings.SETTINGS));
-                    imageView.setImageBitmap(image);
-                    imageView.setVisibility(View.VISIBLE);
+                    String string = data.getStringExtra(Settings.SETTINGS);
+                    saveUserSettings(string);
+                    loadUserSettings();
                 } catch (Exception ex) {
                     ex.getStackTrace();
+                    Log.e(TAG, "MainActivity -> onActivityResult", ex);
                 }
 
             }
         }
     }
 
+    public void saveUserSettings(String pathFile) {
+        Log.d(TAG, "MainActivity -> saveUserSettings");
+        if (isExternalStorageMounted()) {
+            if (pathFile != null) {
+                try {
+                    File file = new File(this.getExternalFilesDir(null), SETTINGS_FILE_NAME);
+                    BufferedWriter bw = new BufferedWriter(new FileWriter(file, false));
+                    bw.append(pathFile);
+                    bw.close();
+                } catch (IOException ex) {
+                    Log.e(TAG, "MainActivity -> saveUserSettings", ex);
+                    ex.printStackTrace();
+                }
+            }
+        } else {
+            Log.e(TAG, "MainActivity -> loadUserSettings -> isExternalStorageMounted");
+            Toast.makeText(this, R.string.external_storage_not_available, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void loadUserSettings() {
+        Log.d(TAG, "MainActivity -> loadUserSettings");
+        File file = new File(this.getExternalFilesDir(null), SETTINGS_FILE_NAME);
+        if (isExternalStorageMounted()) {
+            if (file.exists()) {
+                try {
+                    if (file.length() > 0) {
+                        BufferedReader br = new BufferedReader(new FileReader(file));
+                        String string = br.readLine();
+                        if (!string.equals("default")) {
+                            Bitmap image = BitmapFactory.decodeFile(string);
+                            mBackground.setImageBitmap(image);
+                            mBackground.setVisibility(View.VISIBLE);
+                            br.close();
+                        } else {
+                            mBackground.setBackgroundResource(0);
+                            mBackground.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                } catch (IOException ex) {
+                    Log.e(TAG, "MainActivity -> loadUserSettings");
+                    ex.printStackTrace();
+                }
+            }
+        } else {
+            Log.e(TAG, "MainActivity -> loadUserSettings -> isExternalStorageMounted");
+            Toast.makeText(this, R.string.external_storage_not_available, Toast.LENGTH_LONG).show();
+        }
+    }
+
 
     private void initViews() {
+        Log.d(TAG, "MainActivity -> initViews");
         mTextViewValues = findViewById(R.id.textViewValues);
         mStandardCalc = findViewById(R.id.standardCalc);
         mExtendedCalc = findViewById(R.id.extendedCalc);
+        mBackground = findViewById(R.id.imageViewBackground);
 
         findViewById(R.id.btnActionSwitchMode).setOnClickListener(this);
         findViewById(R.id.btnActionSwitchModeExt).setOnClickListener(this);
@@ -98,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+        Log.d(TAG, "MainActivity -> calcButtons -> onClick");
         switch (v.getId()) {
             case R.id.btnActionSwitchMode:
                 mStandardCalc.setVisibility(View.INVISIBLE);
@@ -165,5 +235,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mTextViewValues.setText(R.string.btn_zero);
                 break;
         }
+    }
+
+    public boolean isExternalStorageMounted() {
+        Log.d(TAG, "MainActivity -> checkFilePathEditText -> isExternalStorageReadable");
+        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) ||
+                Environment.MEDIA_MOUNTED_READ_ONLY.equals(Environment.getExternalStorageState());
     }
 }

@@ -22,19 +22,19 @@ import static android.os.Environment.DIRECTORY_DOWNLOADS;
 public class Settings extends AppCompatActivity {
 
     private EditText mFilePathEdTx;
-    private Button mBtnPathFileOk;
-    private Button mBtnPathFileCancel;
     public static final String SETTINGS = "ru.sergeyzubov.android-hw-122.settings";
     public static final int REQUEST_CODE_PERMISSION_READ_STORAGE = 11;
     public static final String TAG = "My app";
+    public static final String BACKGROUND_DEFAULT = "default";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+
         mFilePathEdTx = findViewById(R.id.editTextFilePath);
-        mBtnPathFileOk = findViewById(R.id.btnFilePathOk);
+        Button mBtnPathFileOk = findViewById(R.id.btnFilePathOk);
 
         mBtnPathFileOk.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,7 +51,19 @@ public class Settings extends AppCompatActivity {
             }
         });
 
-        mBtnPathFileCancel = findViewById(R.id.btnFilePathCancel);
+        Button mBtnBackgroundDefault = findViewById(R.id.btnBackgroundDefault);
+
+        mBtnBackgroundDefault.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "Settings -> btnBackgroundDefault -> onClick");
+                Intent answerIntent = new Intent().putExtra(SETTINGS, BACKGROUND_DEFAULT);
+                setResult(RESULT_OK, answerIntent);
+                finish();
+            }
+        });
+
+        Button mBtnPathFileCancel = findViewById(R.id.btnFilePathCancel);
 
         mBtnPathFileCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +87,7 @@ public class Settings extends AppCompatActivity {
             } else {
                 File file = new File(Environment.getExternalStoragePublicDirectory(DIRECTORY_DOWNLOADS),picName);
                 if (!file.exists()) {
-                    Toast.makeText(this, R.string.directory_not_available, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.file_not_available, Toast.LENGTH_LONG).show();
                     return null;
                 }
                 return file.toString();
